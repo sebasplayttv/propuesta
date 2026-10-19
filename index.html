@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Una pregunta especial 💌</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100dvh;overflow:hidden;background:radial-gradient(circle at 20% 20%,#46316c,#171127 55%,#0b0b19);color:#fff}main{min-height:100dvh;display:grid;place-items:center;padding:24px;position:relative}.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.55;animation:twinkle 3s infinite alternate;pointer-events:none}.panel{width:min(560px,100%);padding:clamp(25px,7vw,55px) 25px;text-align:center;border-radius:30px;background:#ffffff11;backdrop-filter:blur(12px);border:1px solid #ffffff29;box-shadow:0 25px 80px #0007;z-index:1;animation:appear .65s ease}.emoji{font-size:clamp(65px,17vw,100px);display:block;filter:drop-shadow(0 0 24px #fa9cc2);animation:float 3s ease-in-out infinite}h1{font-size:clamp(28px,7vw,45px);line-height:1.14;margin:20px 0 12px}p{color:#f4dfea;font-size:clamp(16px,4vw,19px);line-height:1.6;min-height:50px}.buttons{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:30px}button{border:0;padding:15px 24px;border-radius:999px;font:700 16px system-ui;cursor:pointer;transition:transform .2s,box-shadow .2s}button:hover,.wa-link:hover{transform:translateY(-3px)}.wa-link{display:inline-block;text-decoration:none;border:0;padding:15px 24px;border-radius:999px;font:700 16px system-ui;cursor:pointer;transition:transform .2s,box-shadow .2s;margin-top:18px}.wa-link.hidden{display:none}.primary{color:#32142d;background:linear-gradient(120deg,#ffd5e5,#f6a6d4);box-shadow:0 9px 30px #ef80ba55}.secondary{background:#fff2;color:#fff;border:1px solid #fff5}.hidden{display:none}.confetti{position:fixed;top:-25px;font-size:24px;z-index:5;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(560deg);opacity:0}}@keyframes twinkle{to{opacity:1;transform:scale(1.8)}}@keyframes float{50%{transform:translateY(-10px)}}@keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main id="sky"><section class="panel" aria-live="polite"><span class="emoji" id="art">💌</span><h1 id="heading">Tengo algo especial para ti...</h1><p id="message">Preparé una pequeña sorpresa. ¿La descubrimos?</p><div class="buttons"><button class="primary" id="next">Abrir sorpresa ✨</button><button class="secondary hidden" id="other">Hablemos 💬</button></div><a class="wa-link primary hidden" id="whatsapp" target="_blank" rel="noopener noreferrer">Enviar respuesta por WhatsApp 💬</a></section></main>
+<script>
+const steps=[{art:'💌',title:'Tengo algo especial para ti...',text:'Preparé una pequeña sorpresa. ¿La descubrimos?',btn:'Abrir sorpresa ✨'},{art:'✨',title:'Cada momento cuenta',text:'Las pequeñas historias que compartimos se han vuelto mis recuerdos favoritos.',btn:'Siguiente 💖'},{art:'🌷',title:'Un futuro por imaginar',text:'Me emociona pensar en nuevos caminos, proyectos y aventuras a tu lado.',btn:'Tengo una pregunta…'},{art:'💍',title:'¿Te quieres casar conmigo?',text:'No tienes que responder ahora. Quería compartir contigo lo que siento.',btn:'Sí, quiero ❤️'}];
+// OPCIONAL: escribe aquí el número que recibirá las respuestas,
+// con indicativo de país, sin el símbolo +, espacios ni guiones.
+// Ejemplo para Colombia: '573001234567'. Si queda vacío,
+// WhatsApp permite elegir el contacto con el que compartir el mensaje.
+const numeroWhatsApp = '';
+function enlaceWhatsApp(respuesta) {
+  const texto = encodeURIComponent(respuesta);
+  return numeroWhatsApp
+    ? `https://wa.me/${numeroWhatsApp}?text=${texto}`
+    : `https://api.whatsapp.com/send?text=${texto}`;
+}
+let idx=0;
+const art=document.getElementById('art'),heading=document.getElementById('heading'),message=document.getElementById('message'),next=document.getElementById('next'),other=document.getElementById('other'),whatsapp=document.getElementById('whatsapp');
+function render(){
+  const s=steps[idx];art.textContent=s.art;heading.textContent=s.title;message.textContent=s.text;next.textContent=s.btn;
+  other.classList.toggle('hidden',idx!==3);
+  document.querySelector('.panel').style.animation='none';
+  void document.querySelector('.panel').offsetWidth;
+  document.querySelector('.panel').style.animation='appear .65s ease';
+}
+function mostrarRespuesta(acepta){
+  if(acepta){
+    art.textContent='🎉';heading.textContent='¡Sí, quiero! ❤️';
+    message.textContent='¡Qué momento tan especial! Envía tu respuesta por WhatsApp. 💕';
+    whatsapp.href=enlaceWhatsApp('¡Sí, quiero casarme contigo! ❤️💍');
+    celebrate();
+  }else{
+    art.textContent='💗';heading.textContent='Sí quiero, después 💗';
+    message.textContent='Me gustaría que hablemos primero y sigamos construyendo nuestra historia. 💬';
+    whatsapp.href=enlaceWhatsApp('Sí quiero, después 💗. Hablemos primero 💬');
+  }
+  next.classList.add('hidden');other.classList.add('hidden');
+  whatsapp.classList.remove('hidden');
+}
+next.addEventListener('click',()=>{if(idx<3){idx++;render()}else{mostrarRespuesta(true)}});
+other.addEventListener('click',()=>mostrarRespuesta(false));
+const sky=document.getElementById('sky');for(let i=0;i<65;i++){let star=document.createElement('span');star.className='star';star.style.left=Math.random()*100+'%';star.style.top=Math.random()*100+'%';star.style.animationDelay=Math.random()*4+'s';sky.append(star)}function celebrate(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<55;i++){const item=document.createElement('span');item.className='confetti';item.textContent=['💕','💖','✨','🌸'][i%4];item.style.left=Math.random()*100+'vw';item.style.animationDuration=2+Math.random()*3+'s';item.style.animationDelay=Math.random()*1.8+'s';document.body.append(item);setTimeout(()=>item.remove(),7000)}}
+</script>
+</body>
+</html>
